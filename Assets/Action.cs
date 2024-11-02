@@ -225,7 +225,7 @@ public class Action : MonoBehaviour
 
             if (gunMode == true)
             {
-                //Change cursor to a Crosshair
+                    //Change cursor to a Crosshair
                 Cursor.SetCursor(cursorSniper, Vector2.zero, CursorMode.ForceSoftware);
                 if (Input.GetMouseButtonDown(0))
                 {
