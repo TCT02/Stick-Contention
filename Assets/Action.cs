@@ -11,7 +11,7 @@ public class Action : MonoBehaviour
 
     public float jumpPower;
     public float defjumpPower = 500;
-    public float moveRange = 5f;
+    public float moveRange = 7f;
 
     Vector3 groundPos = new Vector3(0, 0, 0);
     Vector3 initialPos = new Vector3(0, 0, 0);
@@ -53,7 +53,7 @@ public class Action : MonoBehaviour
         //Set Movement Parameters
         speed = defSpeed;
         jumpPower = defjumpPower;
-        moveRange = 5;
+        moveRange = 7;
 
         //Initializes all modes
         beginTurn(); 
@@ -73,42 +73,7 @@ public class Action : MonoBehaviour
     // Update is called once per frame
     void Update() //Movement and Attack controls are handled here
     {
-        /*
-        Vector3 difference;
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        difference = (mousePos - transform.position);
-        difference.Normalize();
-        angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
-        //angle = Mathf.Atan2(Input.mousePosition.y - transform.position.y, Input.mousePosition.x - transform.position.x) * Mathf.Rad2Deg - 90f;
-
-
-        if (false) 
-        { 
-            print("Bang bang");
-            //Change cursor to a Crosshair
-            Cursor.SetCursor(cursorSniper, Vector2.zero, CursorMode.ForceSoftware);
-
-            //code to aim gun
-            Instantiate(bulletPrefab, gameObject.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0,0,angle));
-            bullet = GameObject.Find("Bullet(Clone)");
-
-            if (facingRight == true)
-            {
-                //GameObject BPR = gameObject.GetComponentInChildren<"BulletPointR">();
-                activeBP = transform.Find("BulletPointR").position;
-                bullet.transform.position = activeBP;
-            }
-            else //if facing left instead,
-            {
-                activeBP = transform.Find("BulletPointL").position;
-                bullet.transform.position = activeBP;
-            }
-
-            gunMode = false; //delete this later since it can be done in endTurn()
-
-            //endTurn();
-        }
-        */
+    
         if (((transform.position.x <= initialPos.x + moveRange) && (transform.position.x >= initialPos.x - moveRange)) && moveMode == true)
         { //Movement Controls 
             if (Input.GetKey(KeyCode.D)) //Rightward movement
@@ -171,7 +136,27 @@ public class Action : MonoBehaviour
         }
         if (moveMode == false) //if(finished == false) //Alternate condition which turns on combat controls.
         { //Attack Controls
-            
+
+            //If the mouse is left of the character, change orientation.            
+            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            print(mousePos);
+
+            if (mousePos.x > gameObject.transform.position.x)
+            { //If character is facing right do..
+                facingRight = true;
+                //set bullet exit location
+                activeBP = transform.Find("BulletPointR").position;
+                print(facingRight);
+                print("Looking Right");
+            }
+            else
+            { //If character is facing left do..
+                facingRight = false;
+                //set bullet exit location
+                activeBP = transform.Find("BulletPointL").position;
+                print(facingRight);
+                print("Looking left");
+            }
             //print(attackMode);
             //display some kind of UI?
             if (Input.GetKeyDown(KeyCode.Alpha1) && attackMode == false) //Begin Gun targetting
@@ -184,6 +169,7 @@ public class Action : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha2) && attackMode == false) //Begin Grenade targetting
             {
                 attackMode = true;
+                grenadeMode = true;
                 print("2 was pressed");
 
                 //Change cursor to a Grenade
@@ -225,8 +211,10 @@ public class Action : MonoBehaviour
 
             if (gunMode == true)
             {
-                    //Change cursor to a Crosshair
+                //Change cursor to a Crosshair
                 Cursor.SetCursor(cursorSniper, Vector2.zero, CursorMode.ForceSoftware);
+                
+                //Shoot Action
                 if (Input.GetMouseButtonDown(0))
                 {
                     Vector3 difference;
@@ -241,23 +229,33 @@ public class Action : MonoBehaviour
                     Instantiate(bulletPrefab, gameObject.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, angle));
                     bullet = GameObject.Find("Bullet(Clone)");
 
+                    bullet.transform.position = activeBP;
+                    /*
                     if (facingRight == true)
                     {
-                        //GameObject BPR = gameObject.GetComponentInChildren<"BulletPointR">();
-                        activeBP = transform.Find("BulletPointR").position;
+                        
                         bullet.transform.position = activeBP;
                     }
                     else //if facing left instead,
                     {
-                        activeBP = transform.Find("BulletPointL").position;
+                       
                         bullet.transform.position = activeBP;
                     }
-
+                    */
                     gunMode = false; //delete this later since it can be done in endTurn()
 
                     //endTurn();
                 }
             }
+            else if (grenadeMode == true)
+            {
+
+            }
+            else if (bootMode == true)
+            {
+                
+            }
+
 
         }      
 

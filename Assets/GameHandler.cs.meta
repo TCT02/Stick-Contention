@@ -3,7 +3,13 @@ guid: e91e3f35edb29b042841dde8a6a82bb7
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - blueStick: {fileID: 6588678172813380061, guid: 0667c93ab38a4f643bbd417a2d7cc61b, type: 3}
+  - redStick: {fileID: 1127820396633514017, guid: d3fa01eaebc5aeb4babdb40e3660cb8b, type: 3}
+  - playerOne: {instanceID: 0}
+  - playerTwo: {instanceID: 0}
+  - blueSpawn: {instanceID: 0}
+  - redSpawn: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

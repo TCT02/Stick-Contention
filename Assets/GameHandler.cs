@@ -92,14 +92,13 @@ public class Game : MonoBehaviour
 
             playerOne.GetComponent<Action>().enabled = true;
         }
-           
-      
+               
     }
 
     void spawnPlayers()
     {
         //Spawns the prefab blue stick figure from assets on the blue spawn point
-        Instantiate(blueStick, blueSpawn.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, -180));
+        Instantiate(blueStick, blueSpawn.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, 0));
 
         //Add playerOne to the blue player list
         blueList.Add(playerOne);
@@ -109,7 +108,7 @@ public class Game : MonoBehaviour
         playerOne = GameObject.Find("BlueStickFigure(Clone)");
 
         //Spawns the prefab red stick figure from assets on the red spawn point
-        Instantiate(redStick, redSpawn.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, -180));
+        Instantiate(redStick, redSpawn.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, 0));
    
         //Add playerTwo to the red player list
         redList.Add(playerTwo);
