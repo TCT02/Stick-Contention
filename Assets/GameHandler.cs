@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -51,7 +52,7 @@ public class Game : MonoBehaviour
         if (gameStarted)
         {
             // print("checking win condition");
-
+            //If one of the two team lists are empty, the opposing team wins
             if (redList.Count == 0)
             {
                 print("Blue Team has won!");
@@ -66,6 +67,25 @@ public class Game : MonoBehaviour
                 //Add code to change display text for winning
                 //Add code to end and reset the game
             }
+
+            
+            if (playerOne.GetComponent<Action>().finished == true)
+            { //If player 1 has finished their turn, disable them and enable player 2
+                playerOne.GetComponent<Action>().enabled = false;
+
+                //P2
+                playerTwo.GetComponent<Action>().beginTurn();
+
+
+            }
+            else if (playerTwo.GetComponent<Action>().finished == true)
+            { //If player 2 has finished their turn, disable them and enable player 1
+                playerTwo.GetComponent<Action>().enabled = false;
+
+                //P1
+                playerOne.GetComponent<Action>().beginTurn();
+            }
+
         }
     }
     private void FixedUpdate()

@@ -36,13 +36,23 @@ public class Action : MonoBehaviour
     public Texture2D cursorGrenade;
     public Texture2D cursorBoot;
 
+    //Bullet Variables
     public GameObject bulletPrefab;
     public GameObject bullet;
-    public Vector3 activeBP;
+    public Vector3 bulletPoint;
 
+    //Physics
     private Rigidbody rb;
-    //Vector3 pos;
-    // Gun pointing variables.
+
+    //Basic character Frames
+    public Material idle;
+    public Material walk1;
+    public Material walk2;
+    public Material gunStance;
+    public Material grenadeStance;
+    public Material bootStance;
+
+    // Weapon Aiming variables.
     Vector3 mousePos;
     float angle;
 
@@ -54,6 +64,7 @@ public class Action : MonoBehaviour
         speed = defSpeed;
         jumpPower = defjumpPower;
         moveRange = 7;
+     
 
         //Initializes all modes
         beginTurn(); 
@@ -73,7 +84,9 @@ public class Action : MonoBehaviour
     // Update is called once per frame
     void Update() //Movement and Attack controls are handled here
     {
-    
+        //Exit point of projectiles is always updated to a point offset from the character.
+        bulletPoint = transform.Find("BulletPoint").position;
+
         if (((transform.position.x <= initialPos.x + moveRange) && (transform.position.x >= initialPos.x - moveRange)) && moveMode == true)
         { //Movement Controls 
             if (Input.GetKey(KeyCode.D)) //Rightward movement
@@ -88,6 +101,7 @@ public class Action : MonoBehaviour
                 else //Otherwise, the character is grounded and can move
                 {
                     transform.position += Vector3.right * speed * Time.deltaTime;
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
 
             }
@@ -102,6 +116,7 @@ public class Action : MonoBehaviour
                 else //Otherwise, the character is grounded and can move
                 {
                     transform.position += Vector3.left * speed * Time.deltaTime;
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
                 }
 
             }
@@ -139,23 +154,16 @@ public class Action : MonoBehaviour
 
             //If the mouse is left of the character, change orientation.            
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            print(mousePos);
 
             if (mousePos.x > gameObject.transform.position.x)
             { //If character is facing right do..
                 facingRight = true;
-                //set bullet exit location
-                activeBP = transform.Find("BulletPointR").position;
-                print(facingRight);
-                print("Looking Right");
+                transform.rotation = Quaternion.Euler(0, 0, 0);
             }
             else
             { //If character is facing left do..
                 facingRight = false;
-                //set bullet exit location
-                activeBP = transform.Find("BulletPointL").position;
-                print(facingRight);
-                print("Looking left");
+                transform.rotation = Quaternion.Euler(0, 180, 0);
             }
             //print(attackMode);
             //display some kind of UI?
@@ -229,7 +237,7 @@ public class Action : MonoBehaviour
                     Instantiate(bulletPrefab, gameObject.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, angle));
                     bullet = GameObject.Find("Bullet(Clone)");
 
-                    bullet.transform.position = activeBP;
+                    bullet.transform.position = bulletPoint;
                     /*
                     if (facingRight == true)
                     {
@@ -242,7 +250,7 @@ public class Action : MonoBehaviour
                         bullet.transform.position = activeBP;
                     }
                     */
-                    gunMode = false; //delete this later since it can be done in endTurn()
+
 
                     //endTurn();
                 }
@@ -265,7 +273,7 @@ public class Action : MonoBehaviour
     {
        
     }
-    void beginTurn()
+    public void beginTurn()
     {
         //Initialize turn for player.
         initialPos = transform.position; //Get new position to base movement distance.
