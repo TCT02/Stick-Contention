@@ -17,12 +17,9 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        //tweak this as you go
         damage = 20;
         lifeTime = .5f;
         speed = 30;
-        //direction = transform.up; //tranform.up is a (0,1,0) vector I think
-        direction = new Vector3(0, 0, 0);
         //Bullet will begin not moving
         //direction should be immediately assigned the vector of the mouse location.
 

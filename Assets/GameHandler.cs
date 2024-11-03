@@ -23,6 +23,7 @@ public class Game : MonoBehaviour
     public bool gameStarted;
     public bool p1Active;
     public bool p2Active;
+    public bool restarting;
 
     //PlayerLists
     ArrayList redList = new ArrayList();
@@ -32,7 +33,7 @@ public class Game : MonoBehaviour
     void Start()
     {
         //Invoke("spawnPlayers", 1);
-       
+        restarting = false;
         blueSpawn = GameObject.Find("BlueSpawn");
         redSpawn = GameObject.Find("RedSpawn");
         spawnPlayers();
@@ -112,9 +113,10 @@ public class Game : MonoBehaviour
             }         
 
         }
-        else if (gameStarted == false) 
+        else if (gameStarted == false && restarting == false) 
         {
             //Code to reset the map for replay 
+            restarting = true;
             Invoke("resetMap", 3);
         }
 

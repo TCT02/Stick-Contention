@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+//using UnityEngine.UIElements;
 
 public class Action : MonoBehaviour
 {   
     //Movement Variables
-    public float speed;
-    public float defSpeed = 7;
-
-    public float jumpPower;
-    public float defjumpPower = 500;
-    public float moveRange = 7f;
+    float speed;
+    float defSpeed = 7;
+    
+    float jumpPower;
+    float defjumpPower = 500;
+    float moveRange = 7f;
 
     Vector3 groundPos = new Vector3(0, 0, 0);
     Vector3 initialPos = new Vector3(0, 0, 0);
@@ -19,38 +20,46 @@ public class Action : MonoBehaviour
 
     public bool facingRight;
 
-    public bool canJump = false;
-    public bool onGround = false;
+    bool canJump = false;
+    bool onGround = false;
 
     //Action Mode variables
-    public bool moveMode = false; //Indicates movement phase
-    public bool attackMode = false; //Indicates attack phase (for attacks)
+    bool moveMode = false; //Indicates movement phase
+    bool attackMode = false; //Indicates attack phase (for attacks)
     public bool finished = false; //Indicates finished action phase for this player.
 
-    public bool gunMode = false; //Indicates 
-    public bool grenadeMode = false; //Indicates
-    public bool bootMode = false; //Indicates
-    
-    public Texture2D cursorArrow;
-    public Texture2D cursorSniper;
-    public Texture2D cursorGrenade;
-    public Texture2D cursorBoot;
+    bool gunMode = false; //Indicates 
+    bool grenadeMode = false; //Indicates
+    bool bootMode = false; //Indicates
 
-    //Bullet Variables
-    public GameObject bulletPrefab;
-    public GameObject bullet;
-    public Vector3 bulletPoint;
+    [SerializeField] Texture2D cursorArrow;
+    [SerializeField] Texture2D cursorSniper;
+    [SerializeField] Texture2D cursorGrenade;
+    [SerializeField] Texture2D cursorBoot;
+
+    //Prefab Variables
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject bullet;
+    [SerializeField] Vector3 bulletPoint; //spawn location of bullets
+
+    [SerializeField] GameObject grenadePrefab;
+    [SerializeField] GameObject grenade;
+    [SerializeField] Vector3 throwPoint; //spawn location of throwables
+
+    [SerializeField] GameObject bootPrefab;
+    GameObject boot;
 
     //Physics
     private Rigidbody rb;
 
     //Basic character Frames
-    public Material idle;
-    public Material walk1;
-    public Material walk2;
-    public Material gunStance;
-    public Material grenadeStance;
-    public Material bootStance;
+    [SerializeField] Material idle;
+    [SerializeField] Material walk1;
+    [SerializeField] Material walk2;
+    [SerializeField] Material gunStance;
+    [SerializeField] Material grenadeStance;
+    [SerializeField] Material bootStance;
+    [SerializeField] MeshRenderer currSprite; 
 
     // Weapon Aiming variables.
     Vector3 mousePos;
@@ -64,17 +73,10 @@ public class Action : MonoBehaviour
         speed = defSpeed;
         jumpPower = defjumpPower;
         moveRange = 7;
-     
+        currSprite = transform.Find("Quad").GetComponent<MeshRenderer>();
 
         //Initializes all modes
         beginTurn(); 
-        /*
-        initialPos = transform.position;
-        moveMode = true;
-        actionMode = false;
-        finished = false; 
-        */
-
         //Checks
         onGround = true;
 
@@ -86,6 +88,9 @@ public class Action : MonoBehaviour
     {
         //Exit point of projectiles is always updated to a point offset from the character.
         bulletPoint = transform.Find("BulletPoint").position;
+        throwPoint = transform.Find("ThrowPoint").position;
+        //If A OR D are held down AND moveMode is active, play this 2 frame animation
+
 
         if (((transform.position.x <= initialPos.x + moveRange) && (transform.position.x >= initialPos.x - moveRange)) && moveMode == true)
         { //Movement Controls 
@@ -202,9 +207,12 @@ public class Action : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha4) && finished == false) //Back out of action choice
             {
                 attackMode = false;
+                gunMode = false; //Indicates gun action
+                grenadeMode = false; //Indicates grenade action
                 //Add code to hide any visuals related to each action
-
+                currSprite.material = idle;
                 Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
+
                 print("4 was pressed, choice reversed, choose your action");
 
 
@@ -220,10 +228,15 @@ public class Action : MonoBehaviour
             {
                 //Change cursor to a Crosshair
                 Cursor.SetCursor(cursorSniper, Vector2.zero, CursorMode.ForceSoftware);
-                
+                //Sprite swap to gun sprite
+                currSprite.material = gunStance;
+
                 //Shoot Action
                 if (Input.GetMouseButtonDown(0))
                 {
+                    
+                    //Calculate angle between mouse and the firing point 
+                    //to determine the bullet trajectory.
                     Vector3 difference;
                     mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     difference = (mousePos - transform.position);
@@ -254,10 +267,25 @@ public class Action : MonoBehaviour
         }      
 
     }
-
+    
     private void FixedUpdate()
     {
-       
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) && moveMode == true)
+        {
+            //currSprite = walk1;
+            //Invoke("walkCycle", .5f);
+
+        }
+        if ((Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D)) && moveMode == true)
+        {
+            //currSprite = idle;
+        }
+
+    }
+   
+    void walkCycle()
+    {
+        transform.Find("Quad").GetComponent<MeshRenderer>().material = walk2;
     }
 
     public void beginTurn()
@@ -269,9 +297,7 @@ public class Action : MonoBehaviour
         attackMode = false;
         gunMode = false; //Indicates gun action
         grenadeMode = false; //Indicates grenade action
-        bootMode = false; //Indicates boot action
-
-        
+        bootMode = false; //Indicates boot action     
 
     }
     void endTurn()
@@ -285,6 +311,7 @@ public class Action : MonoBehaviour
         gunMode = false; //Indicates gun action
         grenadeMode = false; //Indicates grenade action
         bootMode = false; //Indicates boot action
+        currSprite.material = idle; //Reset sprite to idle sprite.
 
         finished = true; //Indicates finished action phase for this player.
     }
