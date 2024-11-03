@@ -3,21 +3,28 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //Prefab placeholders for characters
     public GameObject blueStick;
     public GameObject redStick;
 
+    //Dedicated reference to each player's character
     public GameObject playerOne;
     public GameObject playerTwo;
 
+    //The spawn locations of the two players
     public GameObject blueSpawn;
     public GameObject redSpawn;
 
+    //Game status checks
     public bool gameStarted;
+    public bool p1Active;
+    public bool p2Active;
 
+    //PlayerLists
     ArrayList redList = new ArrayList();
     ArrayList blueList = new ArrayList();
     ArrayList playerList = new ArrayList();
@@ -25,10 +32,12 @@ public class Game : MonoBehaviour
     void Start()
     {
         //Invoke("spawnPlayers", 1);
+       
         blueSpawn = GameObject.Find("BlueSpawn");
         redSpawn = GameObject.Find("RedSpawn");
         spawnPlayers();
- 
+        
+
     }
 
     // Update is called once per frame
@@ -51,7 +60,8 @@ public class Game : MonoBehaviour
         }
         if (gameStarted)
         {
-            // print("checking win condition");
+            // print("Some Visual for GAME START");
+
             //If one of the two team lists are empty, the opposing team wins
             if (redList.Count == 0)
             {
@@ -71,49 +81,51 @@ public class Game : MonoBehaviour
             
             if (playerOne.GetComponent<Action>().finished == true)
             { //If player 1 has finished their turn, disable them and enable player 2
+
+                print("Player 2's Turn has begun");
                 playerOne.GetComponent<Action>().enabled = false;
 
-                //P2
-                playerTwo.GetComponent<Action>().beginTurn();
-
+                ////Turn on P2
+                if (p1Active == true)
+                {
+                    p1Active = false;
+                    playerTwo.GetComponent<Action>().enabled = true;
+                    playerTwo.GetComponent<Action>().beginTurn();
+                    p2Active = true;
+                }           
 
             }
-            else if (playerTwo.GetComponent<Action>().finished == true)
+            if (playerTwo.GetComponent<Action>().finished == true)
             { //If player 2 has finished their turn, disable them and enable player 1
-                playerTwo.GetComponent<Action>().enabled = false;
 
-                //P1
-                playerOne.GetComponent<Action>().beginTurn();
-            }
+                playerTwo.GetComponent<Action>().enabled = false;               
+                print("Player 1's Turn has begun");
+                if (p2Active == true)
+                {
+                    //Turn on P1
+                    p2Active = false;
+                    playerOne.GetComponent<Action>().enabled = true;
+                    playerOne.GetComponent<Action>().beginTurn();
+                    p1Active = true;
+                }
+
+            }         
 
         }
-    }
-    private void FixedUpdate()
-    {
-        
-    }
+        else if (gameStarted == false) 
+        {
+            //Code to reset the map for replay 
+            Invoke("resetMap", 3);
+        }
 
+    }
+    void resetMap()
+    { //Reloads the scene that holds the map.
+        SceneManager.LoadScene("Map1");
+    }
 
     //Code something to pass control between players. (Disable the script of the player not acting)
     //When the player status finished == true, disable their script, enable the other.
-    private void OnMouseDown()
-    //private void OnKeyDown()
-    {
-        //Enable one player or the other's controls.
-        if (playerOne.GetComponent<Action>().enabled)
-        {
-            playerOne.GetComponent<Action>().enabled = false;
-
-            playerTwo.GetComponent<Action>().enabled = true;
-        }      
-        else if (playerTwo.GetComponent<Action>().enabled)
-        {
-            playerTwo.GetComponent<Action>().enabled = false;
-
-            playerOne.GetComponent<Action>().enabled = true;
-        }
-               
-    }
 
     void spawnPlayers()
     {
@@ -133,6 +145,9 @@ public class Game : MonoBehaviour
         //Add playerTwo to the red player list
         redList.Add(playerTwo);
         playerList.Add(playerOne);
+
+        p1Active = true;
+        p2Active = false;
 
         //Assign player with the reference to their prefab that was spawned on the map
         playerTwo = GameObject.Find("RedStickFigure(Clone)");

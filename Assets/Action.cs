@@ -137,9 +137,13 @@ public class Action : MonoBehaviour
                 Invoke("disableJump", 1);
 
             }
-            if (Input.GetKeyDown(KeyCode.T)) //force end movement mode 
+            if (Input.GetKeyDown(KeyCode.S)) //force end movement mode 
             {
+                //Turns off moveMode and goes to the following else statement.
+                //rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 moveMode = false;
+                //attackMode = false;
+                print("Movemode terminated by choice");
             }
 
         }
@@ -183,8 +187,6 @@ public class Action : MonoBehaviour
                 //Change cursor to a Grenade
                 Cursor.SetCursor(cursorGrenade, Vector2.zero, CursorMode.ForceSoftware);
 
-                //code to aim grenade
-
                 //endTurn();
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) && attackMode == false) //Begin Boot targetting
@@ -193,10 +195,7 @@ public class Action : MonoBehaviour
                 print("3 was pressed");
 
                 //Change cursor to a Boot
-                Cursor.SetCursor(cursorBoot, Vector2.zero, CursorMode.ForceSoftware);
-
-                //code to aim boot
-     
+                Cursor.SetCursor(cursorBoot, Vector2.zero, CursorMode.ForceSoftware);   
 
                 //endTurn();
             }
@@ -212,9 +211,9 @@ public class Action : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.T) && finished == false) //Force Terminate turn
             {
-                print("T was pressed");
+                print("Turn Passed By Choice");
                 Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
-                //endTurn();
+                endTurn();
             }
 
             if (gunMode == true)
@@ -238,21 +237,8 @@ public class Action : MonoBehaviour
                     bullet = GameObject.Find("Bullet(Clone)");
 
                     bullet.transform.position = bulletPoint;
-                    /*
-                    if (facingRight == true)
-                    {
-                        
-                        bullet.transform.position = activeBP;
-                    }
-                    else //if facing left instead,
-                    {
-                       
-                        bullet.transform.position = activeBP;
-                    }
-                    */
 
-
-                    //endTurn();
+                    endTurn();
                 }
             }
             else if (grenadeMode == true)
@@ -273,17 +259,19 @@ public class Action : MonoBehaviour
     {
        
     }
+
     public void beginTurn()
     {
         //Initialize turn for player.
         initialPos = transform.position; //Get new position to base movement distance.
+        finished = false; //Indicates finished action phase for this player.
         moveMode = true;
         attackMode = false;
         gunMode = false; //Indicates gun action
         grenadeMode = false; //Indicates grenade action
         bootMode = false; //Indicates boot action
 
-        finished = false; //Indicates finished action phase for this player.
+        
 
     }
     void endTurn()
@@ -292,6 +280,7 @@ public class Action : MonoBehaviour
         //Movemode will be activated in game manager
         //Cursor is also reset to default.
         Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
+        moveMode = false;
         attackMode = false;
         gunMode = false; //Indicates gun action
         grenadeMode = false; //Indicates grenade action
