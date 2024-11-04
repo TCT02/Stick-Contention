@@ -3,6 +3,7 @@ using System.Collections.Generic;
 //using System.Numerics;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class StickFigure : MonoBehaviour
 {
 
@@ -10,15 +11,22 @@ public class StickFigure : MonoBehaviour
     public float MaxHP;
     public bool isDead = false;
 
-    //reference to opposing player
-    public GameObject otherPlayer;
+    //Sound Effect
+    public AudioClip heal;
+    AudioSource sound;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Initialize Sound
+        sound = GetComponent<AudioSource>();
+        sound.clip = heal;
+
+        //Initialize Status
         CurrHP = 100;
         MaxHP = 100;
         isDead = false;
+
     }
 
     // Update is called once per frame
@@ -41,12 +49,11 @@ public class StickFigure : MonoBehaviour
             CurrHP = 0;
 
         }
+        if (collidedWith.CompareTag("MedKit"))
+        {
+           sound.Play();
+        }
        
-    }
-
-    public void die()
-    {
-        
     }
 
 }

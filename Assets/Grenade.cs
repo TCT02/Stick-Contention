@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Grenade : MonoBehaviour
 {
     //Variables 
@@ -15,8 +16,13 @@ public class Grenade : MonoBehaviour
     private Rigidbody rb;
     private SphereCollider boomZone;
 
+    AudioSource soundPlayer;
+    [SerializeField] AudioClip explosion;
+
     void Start()
     {
+        soundPlayer = GetComponent<AudioSource>();
+        soundPlayer.clip = explosion;
         //Weapon stats
         damage = 40;
         boomRadius = 7;
@@ -44,6 +50,7 @@ public class Grenade : MonoBehaviour
     void explode()
     {// handles the explosion of the grenade
         print("BOOM");
+        soundPlayer.Play();
 
         boomZone.radius = boomRadius;
         Destroy(gameObject);

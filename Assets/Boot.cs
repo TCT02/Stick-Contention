@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+
+
 public class Boot : MonoBehaviour
 {
     //Variables 
@@ -11,9 +14,13 @@ public class Boot : MonoBehaviour
     Vector3 bootPosition;
 
     private Rigidbody rb;
+    AudioSource soundPlayer;
+    [SerializeField] AudioClip hit;
 
     void Start()
     {
+        soundPlayer = GetComponent<AudioSource>();
+        soundPlayer.clip = hit;
         //Weapon stats
         lifeTime = 3f; //fuse time before explosion
         speed = 10;
@@ -53,7 +60,7 @@ public class Boot : MonoBehaviour
         //If it hits a player (stick figure), deal effects and self destruct
         if (collidedWith.CompareTag("Stick"))
         {
-
+            soundPlayer.Play();
             //If the boot is right, displace left
             if (bootPosition.x > collidedWith.transform.position.x)
             {

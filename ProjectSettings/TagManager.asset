@@ -11,6 +11,8 @@ TagManager:
   - Bullet
   - Boot
   - Explosion
+  - FxTemporaire
+  - MedKit
   layers:
   - Default
   - TransparentFX

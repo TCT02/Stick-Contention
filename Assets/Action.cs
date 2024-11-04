@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 //using UnityEngine.UIElements;
 
+[RequireComponent(typeof(AudioSource))]
 public class Action : MonoBehaviour
 {   
     //Movement Variables
@@ -65,10 +66,20 @@ public class Action : MonoBehaviour
     Vector3 mousePos;
     float angle;
 
-    // Start is called before the first frame update
+    //Sound Variables and Objects
+    AudioSource soundPlayer;
+    [SerializeField] AudioClip gunShot;
+    [SerializeField] AudioClip gunEquip;
+
+    [SerializeField] AudioClip nadeThrow;
+    [SerializeField] AudioClip nadeEquip;
+
+    [SerializeField] AudioClip bootThrow;
+    [SerializeField] AudioClip decline;
+
     void Start()
     {
-
+        soundPlayer = GetComponent<AudioSource>();
         //Set Movement Parameters
         speed = defSpeed;
         jumpPower = defjumpPower;
@@ -181,7 +192,9 @@ public class Action : MonoBehaviour
             {
                 attackMode = true;
                 gunMode = true;
-                print("1 was pressed");                       
+                print("1 was pressed");
+                soundPlayer.clip = gunEquip;
+                soundPlayer.Play();
 
             }
             if (Input.GetKeyDown(KeyCode.Alpha2) && attackMode == false) //Begin Grenade targetting
@@ -189,7 +202,8 @@ public class Action : MonoBehaviour
                 attackMode = true;
                 grenadeMode = true;
                 print("2 was pressed");
-
+                soundPlayer.clip = nadeEquip;
+                soundPlayer.Play();
 
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) && attackMode == false) //Begin Boot targetting
@@ -197,8 +211,9 @@ public class Action : MonoBehaviour
                 attackMode = true;
                 bootMode = true;
                 print("3 was pressed");
+                soundPlayer.clip = nadeEquip;
+                soundPlayer.Play();
 
-                
             }
             if (Input.GetKeyDown(KeyCode.Alpha4) && finished == false) //Back out of action choice
             {
@@ -209,6 +224,9 @@ public class Action : MonoBehaviour
                 //Add code to hide any visuals related to each action
                 currSprite.material = idle;
                 Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
+
+                soundPlayer.clip = decline;
+                soundPlayer.Play();
 
                 print("4 was pressed, choice reversed, choose your action");
 
@@ -241,6 +259,8 @@ public class Action : MonoBehaviour
                     angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
 
                     print("Bang bang");
+                    soundPlayer.clip = gunShot;
+                    soundPlayer.Play();
 
                     //code to aim gun
                     Instantiate(bulletPrefab, gameObject.transform.position + new Vector3(0, 3, 0), Quaternion.Euler(0, 0, angle));
@@ -271,6 +291,8 @@ public class Action : MonoBehaviour
                     angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
 
                     print("YEET");
+                    soundPlayer.clip = nadeThrow;
+                    soundPlayer.Play();
 
                     //code to aim Grenade
                     Instantiate(grenadePrefab, throwPoint, Quaternion.Euler(0, 0, angle));
@@ -298,6 +320,8 @@ public class Action : MonoBehaviour
                     angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
 
                     print("YEET");
+                    soundPlayer.clip = bootThrow;
+                    soundPlayer.Play();
 
                     //code to aim Grenade
                     Instantiate(bootPrefab, throwPoint, Quaternion.Euler(0, 0, angle));

@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+[RequireComponent(typeof(AudioSource))]
 public class Game : MonoBehaviour
 {
     //Prefab placeholders for characters
@@ -58,14 +59,11 @@ public class Game : MonoBehaviour
     [SerializeField] Color blue; //Default blue team color
     [SerializeField] Color red; //Default red team color
 
-    //Reference to StickFigure Script in each player
-    float plrOneHP;
-    float plrTwoHP;
-
     void Start()
     {
         //Initialize
         restarting = false;
+
 
         //Find Spawn Locations
         blueSpawn = GameObject.Find("BlueSpawn");
