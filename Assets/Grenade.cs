@@ -12,6 +12,7 @@ public class Grenade : MonoBehaviour
     float speed; //speed of the intial grenade throw
     float blastPower;
     Vector3 nadePosition;
+    bool hasCollided = false;
 
     private Rigidbody rb;
     private SphereCollider boomZone;
@@ -22,6 +23,7 @@ public class Grenade : MonoBehaviour
 
     void Start()
     {
+        hasCollided = false;
         soundPlayer = GetComponent<AudioSource>();
         soundPlayer.clip = explosion;
         //Weapon stats
@@ -75,9 +77,9 @@ public class Grenade : MonoBehaviour
         //Check for what the explosion hit and react accordingly
 
         //If it hits a player (stick figure), deal damage and self destruct
-        if (collidedWith.CompareTag("Stick"))
+        if (collidedWith.CompareTag("Stick") && hasCollided == false)
         {
-
+            hasCollided = true;
             soundPlayer.clip = explosion;
             soundPlayer.Play();
             //Inflict HP damage to target

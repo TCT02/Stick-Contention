@@ -13,10 +13,10 @@ public class Action : MonoBehaviour
     
     float jumpPower;
     float defjumpPower = 500;
-    float moveRange = 7f;
+    public float moveRange = 7f;
 
     Vector3 groundPos = new Vector3(0, 0, 0);
-    Vector3 initialPos = new Vector3(0, 0, 0);
+    public Vector3 initialPos = new Vector3(0, 0, 0);
    
 
     public bool facingRight;

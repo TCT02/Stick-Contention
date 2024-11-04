@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(AudioSource))]
 
@@ -12,19 +14,20 @@ public class Boot : MonoBehaviour
     float speed; //speed of the intial grenade throw
     float power;
     Vector3 bootPosition;
-
+    bool hasCollided = false;
     private Rigidbody rb;
     AudioSource soundPlayer;
     [SerializeField] AudioClip hit;
 
     void Start()
     {
+        hasCollided = false;
         soundPlayer = GetComponent<AudioSource>();
         soundPlayer.clip = hit;
         //Weapon stats
         lifeTime = 3f; //fuse time before explosion
-        speed = 10;
-        power = 300;
+        speed = 20;
+        power = 400;
 
         rb = GetComponent<Rigidbody>();
 
@@ -55,12 +58,14 @@ public class Boot : MonoBehaviour
     void OnCollisionEnter(Collision coll)
     {
         GameObject collidedWith = coll.gameObject;
+
         //Check for what the explosion hit and react accordingly
 
         //If it hits a player (stick figure), deal effects and self destruct
-        if (collidedWith.CompareTag("Stick"))
+        if (collidedWith.CompareTag("Stick") && hasCollided == false)
         {
             soundPlayer.Play();
+            hasCollided = true;
             //If the boot is right, displace left
             if (bootPosition.x > collidedWith.transform.position.x)
             {

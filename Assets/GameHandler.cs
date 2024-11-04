@@ -44,6 +44,8 @@ public class Game : MonoBehaviour
     //HP Bar object
     [SerializeField] GameObject blueHPBar;
     [SerializeField] GameObject redHPBar;
+    [SerializeField] GameObject blueMoveBar;
+    [SerializeField] GameObject redMoveBar;
 
     //Turn indicator
     [SerializeField] GameObject turnIndicator;
@@ -131,56 +133,21 @@ public class Game : MonoBehaviour
             //When a player ends their turn, the status finished is set to true. Disable their script, enable the other.
             if (playerOne.GetComponent<Action>().finished == true)
             { //If player 1 has finished their turn, disable them and enable player 2
-          
-                playerOne.GetComponent<Action>().enabled = false;
+
+                
                 showMPText(false, red);
                 showAPText(false, red);
-                ////Turn on P2
-                if (p1Active == true)
-                {
-                    print("Player 2's Turn has begun");
 
-                    //Move an arrow prop or something above a character  to designate turns
-                    //Add delay of about 1-3 seconds before turns are handed over.
-
-                    announce(redTurnStr, red);
-
-                    p1Active = false;
-
-                    playerTwo.GetComponent<Action>().enabled = true;
-                    playerTwo.GetComponent<Action>().beginTurn();
-                    p2Active = true;
-
-                    //Display Instructions for move phase
-                    showMPText(true, red);
-                }           
+                Invoke("givePlrTwoTurn", 2);
 
             }
             if (playerTwo.GetComponent<Action>().finished == true)
             { //If player 2 has finished their turn, disable them and enable player 1
 
-                playerTwo.GetComponent<Action>().enabled = false;
                 showMPText(false, blue);
                 showAPText(false, blue);
 
-                if (p2Active == true)
-                {
-                    print("Player 1's Turn has begun");
-                    //Turn on P1
-                    announce(blueTurnStr, blue);
-
-                    //Move an arrow prop or something above a character  to designate turns
-                    //Add delay of about 1-3 seconds before turns are handed over.
-
-                    p2Active = false;
-
-                    playerOne.GetComponent<Action>().enabled = true;
-                    playerOne.GetComponent<Action>().beginTurn();
-                    p1Active = true;
-
-                    //Display Instructions for move phase
-                    showMPText(true, blue);
-                }
+                Invoke("givePlrOneTurn", 2);
 
             }
 
@@ -212,11 +179,16 @@ public class Game : MonoBehaviour
             blueHPBar.transform.localScale = new Vector3((playerOne.GetComponent<StickFigure>().CurrHP / playerOne.GetComponent<StickFigure>().MaxHP) * 10, 1, 0.1f);
             redHPBar.transform.localScale = new Vector3((playerTwo.GetComponent<StickFigure>().CurrHP / playerTwo.GetComponent<StickFigure>().MaxHP) * 10, 1, 0.1f);
 
-            print((playerOne.GetComponent<StickFigure>().CurrHP / playerOne.GetComponent<StickFigure>().MaxHP) * 10);
-
             //Set the HP number above the health bars.
             blueHPNum.text = (playerOne.GetComponent<StickFigure>().CurrHP +  "/" + playerOne.GetComponent<StickFigure>().MaxHP);
             redHPNum.text = (playerTwo.GetComponent<StickFigure>().CurrHP + "/" + playerTwo.GetComponent<StickFigure>().MaxHP);
+            
+            //Action p1comp = playerOne.GetComponent<Action>();
+            //p1comp.ini
+
+            blueMoveBar.transform.localScale = new Vector3(((playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) - playerTwo.transform.position.x) / (playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) * 10, 1, 0.1f);
+            redMoveBar.transform.localScale = new Vector3(((playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) - playerTwo.transform.position.x)/ (playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) * 10, 1, 0.1f);
+
 
         }
         else if (gameStarted == false && restarting == false) 
@@ -266,6 +238,55 @@ public class Game : MonoBehaviour
 
     }
     
+    void givePlrOneTurn()
+    {
+
+        playerTwo.GetComponent<Action>().enabled = false;
+        if (p2Active == true)
+        {
+            print("Player 1's Turn has begun");
+            //Turn on P1
+            announce(blueTurnStr, blue);
+
+            //Move an arrow prop or something above a character  to designate turns
+            //Add delay of about 1-3 seconds before turns are handed over.
+
+            p2Active = false;
+
+            playerOne.GetComponent<Action>().enabled = true;
+            playerOne.GetComponent<Action>().beginTurn();
+            p1Active = true;
+
+            //Display Instructions for move phase
+            showMPText(true, blue);
+        }
+
+    }
+    void givePlrTwoTurn()
+    {
+
+        playerOne.GetComponent<Action>().enabled = false;
+        ////Turn on P2
+        if (p1Active == true)
+        {
+            print("Player 2's Turn has begun");
+
+            //Move an arrow prop or something above a character  to designate turns
+            //Add delay of about 1-3 seconds before turns are handed over.
+
+            announce(redTurnStr, red);
+
+            p1Active = false;
+
+            playerTwo.GetComponent<Action>().enabled = true;
+            playerTwo.GetComponent<Action>().beginTurn();
+            p2Active = true;
+
+            //Display Instructions for move phase
+            showMPText(true, red);
+        }
+    }
+
     //Game start text
     void startingText()
     {
@@ -280,7 +301,7 @@ public class Game : MonoBehaviour
     {
         winText.color = color;
         winText.text = message;
-        Invoke("clearText", 3);
+        Invoke("clearText", 2);
 
     }
     //Clear any messages
