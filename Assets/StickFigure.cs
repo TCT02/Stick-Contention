@@ -51,6 +51,7 @@ public class StickFigure : MonoBehaviour
         }
         if (collidedWith.CompareTag("MedKit"))
         {
+           sound.clip = heal;
            sound.Play();
         }
        

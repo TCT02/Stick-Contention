@@ -15,6 +15,7 @@ public class Grenade : MonoBehaviour
 
     private Rigidbody rb;
     private SphereCollider boomZone;
+    [SerializeField] Color blastColor;
 
     AudioSource soundPlayer;
     [SerializeField] AudioClip explosion;
@@ -26,11 +27,11 @@ public class Grenade : MonoBehaviour
         //Weapon stats
         damage = 40;
         boomRadius = 7;
-        lifeTime = 2f; //fuse time before explosion
+        lifeTime = 3f; //fuse time before explosion
         speed = 10;
         blastPower = 300;
 
-        rb = GetComponent<Rigidbody>();
+        rb = gameObject.GetComponent<Rigidbody>();
         boomZone = GetComponent<SphereCollider>();
 
         //One time force on the grenade
@@ -50,9 +51,18 @@ public class Grenade : MonoBehaviour
     void explode()
     {// handles the explosion of the grenade
         print("BOOM");
+        //transform.GetComponent<Material>().color = blastColor;
         soundPlayer.Play();
-
-        boomZone.radius = boomRadius;
+        
+        transform.Find("Fuse").GetComponent<MeshRenderer>().enabled = false;
+        transform.localScale = new Vector3(boomRadius, boomRadius, .1f); 
+        
+        rb.velocity = new Vector3(0, rb.velocity.y,0);
+        
+        Invoke("removeSelf", 1);
+    }
+    private void removeSelf()
+    {
         Destroy(gameObject);
     }
 
@@ -67,6 +77,9 @@ public class Grenade : MonoBehaviour
         //If it hits a player (stick figure), deal damage and self destruct
         if (collidedWith.CompareTag("Stick"))
         {
+
+            soundPlayer.clip = explosion;
+            soundPlayer.Play();
             //Inflict HP damage to target
             collidedWith.GetComponent<StickFigure>().CurrHP -= damage;
 

@@ -24,7 +24,7 @@ public class Boot : MonoBehaviour
         //Weapon stats
         lifeTime = 3f; //fuse time before explosion
         speed = 10;
-        power = 500;
+        power = 300;
 
         rb = GetComponent<Rigidbody>();
 
