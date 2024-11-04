@@ -6,12 +6,12 @@ using UnityEngine;
 public class MedKit : MonoBehaviour
 {
     // Start is called before the first frame update
-    private int healVal;
+    private float healVal;
     private float rotateVal;
 
     void Start()
     {
-        healVal = 20;
+        healVal = 40;
         rotateVal = 0;
     }
 
@@ -28,8 +28,8 @@ public class MedKit : MonoBehaviour
 
         if (collidedWith.CompareTag("Stick"))
         {
-            int currHP = collidedWith.GetComponent<StickFigure>().CurrHP;
-            int maxHP = collidedWith.GetComponent<StickFigure>().MaxHP;
+            float currHP = collidedWith.GetComponent<StickFigure>().CurrHP;
+            float maxHP = collidedWith.GetComponent<StickFigure>().MaxHP;
             if (currHP + healVal > maxHP)
             {
                 collidedWith.GetComponent<StickFigure>().CurrHP = maxHP;

@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Grenade : MonoBehaviour
 {
-    // Start is called before the first frame update
-    // Start is called before the first frame update
+    //Variables 
     int damage;
     float boomRadius;
-    float lifeTime; //time before bullet self destructs naturally
-    float speed; //speed of bullet
+    float lifeTime; //time before the grenade explodes
+    float speed; //speed of the intial grenade throw
+    float blastPower;
+    Vector3 nadePosition;
 
     private Rigidbody rb;
     private SphereCollider boomZone;
@@ -21,6 +22,7 @@ public class Grenade : MonoBehaviour
         boomRadius = 7;
         lifeTime = 2f; //fuse time before explosion
         speed = 10;
+        blastPower = 300;
 
         rb = GetComponent<Rigidbody>();
         boomZone = GetComponent<SphereCollider>();
@@ -32,10 +34,15 @@ public class Grenade : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    
-    void explode()
+    private void Update()
     {
+        //Track the position of the grenade to the determine direction of applied explosion force
+        nadePosition = transform.position;
+        
+    }
+
+    void explode()
+    {// handles the explosion of the grenade
         print("BOOM");
 
         boomZone.radius = boomRadius;
@@ -48,12 +55,25 @@ public class Grenade : MonoBehaviour
     void OnCollisionEnter(Collision coll)
     {
         GameObject collidedWith = coll.gameObject;
-        //Check for what the bullet hit and react accordingly
+        //Check for what the explosion hit and react accordingly
 
         //If it hits a player (stick figure), deal damage and self destruct
         if (collidedWith.CompareTag("Stick"))
         {
-            collidedWith.GetComponent<StickFigure>().CurrHP -= damage;          
+            //Inflict HP damage to target
+            collidedWith.GetComponent<StickFigure>().CurrHP -= damage;
+
+            //rb.AddForce(new Vector3(-jumpPower, 1000, 0));
+            //If the nade is right, displace left
+            if (nadePosition.x > collidedWith.transform.position.x)
+            { 
+                collidedWith.GetComponent<Rigidbody>().AddForce(new Vector3(-blastPower, 100, 0));
+            }
+            else //Otherwise displace right
+            {
+                collidedWith.GetComponent<Rigidbody>().AddForce(new Vector3(blastPower, 100, 0));
+            }
+
         }
 
     }

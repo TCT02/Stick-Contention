@@ -6,8 +6,8 @@ using UnityEngine;
 public class StickFigure : MonoBehaviour
 {
 
-    public int CurrHP;
-    public int MaxHP;
+    public float CurrHP;
+    public float MaxHP;
     public bool isDead = false;
 
     //reference to opposing player

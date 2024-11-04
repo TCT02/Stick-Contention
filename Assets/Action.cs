@@ -24,8 +24,8 @@ public class Action : MonoBehaviour
     bool onGround = false;
 
     //Action Mode variables
-    bool moveMode = false; //Indicates movement phase
-    bool attackMode = false; //Indicates attack phase (for attacks)
+    public bool moveMode = false; //Indicates movement phase
+    public bool attackMode = false; //Indicates attack phase (for attacks)
     public bool finished = false; //Indicates finished action phase for this player.
 
     bool gunMode = false; //Indicates 
@@ -39,11 +39,11 @@ public class Action : MonoBehaviour
 
     //Prefab Variables
     [SerializeField] GameObject bulletPrefab;
-    [SerializeField] GameObject bullet;
+    GameObject bullet;
     [SerializeField] Vector3 bulletPoint; //spawn location of bullets
 
     [SerializeField] GameObject grenadePrefab;
-    [SerializeField] GameObject grenade;
+    GameObject grenade;
     [SerializeField] Vector3 throwPoint; //spawn location of throwables
 
     [SerializeField] GameObject bootPrefab;
@@ -74,7 +74,8 @@ public class Action : MonoBehaviour
         jumpPower = defjumpPower;
         moveRange = 7;
         currSprite = transform.Find("Quad").GetComponent<MeshRenderer>();
-
+        moveMode = true;
+        
         //Initializes all modes
         beginTurn(); 
         //Checks
@@ -189,26 +190,22 @@ public class Action : MonoBehaviour
                 grenadeMode = true;
                 print("2 was pressed");
 
-                //Change cursor to a Grenade
-                Cursor.SetCursor(cursorGrenade, Vector2.zero, CursorMode.ForceSoftware);
 
-                //endTurn();
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) && attackMode == false) //Begin Boot targetting
             {
                 attackMode = true;
+                bootMode = true;
                 print("3 was pressed");
 
-                //Change cursor to a Boot
-                Cursor.SetCursor(cursorBoot, Vector2.zero, CursorMode.ForceSoftware);   
-
-                //endTurn();
+                
             }
             if (Input.GetKeyDown(KeyCode.Alpha4) && finished == false) //Back out of action choice
             {
                 attackMode = false;
                 gunMode = false; //Indicates gun action
                 grenadeMode = false; //Indicates grenade action
+                bootMode = false;
                 //Add code to hide any visuals related to each action
                 currSprite.material = idle;
                 Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
@@ -256,11 +253,59 @@ public class Action : MonoBehaviour
             }
             else if (grenadeMode == true)
             {
+                //Change cursor to a Grenade
+                Cursor.SetCursor(cursorGrenade, Vector2.zero, CursorMode.ForceSoftware);
+
+                currSprite.material = grenadeStance;
+
+                //Shoot Action
+                if (Input.GetMouseButtonDown(0))
+                {
+
+                    //Calculate angle between mouse and the firing point 
+                    //to determine the bullet trajectory.
+                    Vector3 difference;
+                    mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    difference = (mousePos - transform.position);
+                    difference.Normalize();
+                    angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
+
+                    print("YEET");
+
+                    //code to aim Grenade
+                    Instantiate(grenadePrefab, throwPoint, Quaternion.Euler(0, 0, angle));
+                    bullet = GameObject.Find("Nade(Clone)");
+
+                    endTurn();
+                }
 
             }
             else if (bootMode == true)
             {
-                
+                //Change cursor to a Boot
+                Cursor.SetCursor(cursorBoot, Vector2.zero, CursorMode.ForceSoftware);
+                currSprite.material = bootStance;
+
+                if (Input.GetMouseButtonDown(0))
+                {
+
+                    //Calculate angle between mouse and the firing point 
+                    //to determine the bullet trajectory.
+                    Vector3 difference;
+                    mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    difference = (mousePos - transform.position);
+                    difference.Normalize();
+                    angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg - 90f;
+
+                    print("YEET");
+
+                    //code to aim Grenade
+                    Instantiate(bootPrefab, throwPoint, Quaternion.Euler(0, 0, angle));
+                    bullet = GameObject.Find("Nade(Clone)");
+
+                    endTurn();
+                }
+
             }
 
 
