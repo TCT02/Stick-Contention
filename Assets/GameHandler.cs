@@ -61,6 +61,11 @@ public class Game : MonoBehaviour
     [SerializeField] Color blue; //Default blue team color
     [SerializeField] Color red; //Default red team color
 
+    //Component objects
+    Action p1CompA;
+    Action p2CompA;
+    StickFigure p1CompSF;
+    StickFigure p2CompSF;
     void Start()
     {
         //Initialize
@@ -82,6 +87,11 @@ public class Game : MonoBehaviour
         spawnPlayers();
         gameStarted = true;
 
+        p1CompA = playerOne.GetComponent<Action>();
+        p2CompA = playerTwo.GetComponent<Action>();
+        p1CompSF = playerOne.GetComponent<StickFigure>();
+        p2CompSF = playerTwo.GetComponent<StickFigure>();
+
         //Announces match start
         //Invoke("startingText", 1);
         startingText();
@@ -94,13 +104,13 @@ public class Game : MonoBehaviour
         //If the player characters are declared dead by some condition,
         //destroy them and remove them from the arraylist.
 
-        if (playerOne && playerOne.GetComponent<StickFigure>().isDead == true)
+        if (playerOne && p1CompSF.isDead == true)
         {
             blueList.RemoveAt(0);
             Destroy(playerOne);
             //print("Number of Blue Players " + blueList.Count);
         }
-        if (playerTwo && playerTwo.GetComponent<StickFigure>().isDead == true)
+        if (playerTwo && p2CompSF.isDead == true)
         {
             redList.RemoveAt(0);
             Destroy(playerTwo);
@@ -108,6 +118,39 @@ public class Game : MonoBehaviour
         }
         if (gameStarted) //Checks win conditions while the game is active
         {
+            //Determine HP bar size based on each character's (CurrHP/MaxHP) * 10
+            blueHPBar.transform.localScale = new Vector3((p1CompSF.CurrHP / p1CompSF.MaxHP) * 10, 1, 0.1f);
+            redHPBar.transform.localScale = new Vector3((p2CompSF.CurrHP / p2CompSF.MaxHP) * 10, 1, 0.1f);
+
+            //Set the HP number above the health bars.
+            blueHPNum.text = (p1CompSF.CurrHP + "/" + p1CompSF.MaxHP);
+            redHPNum.text = (p2CompSF.CurrHP + "/" + p2CompSF.MaxHP);
+
+            //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
+            float BProgressRight = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPos.x - p1CompA.initialPos.x)));
+            float BProgressLeft = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPosL.x - p1CompA.initialPos.x)));
+            if (BProgressRight > BProgressLeft)
+            {
+                blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressRight) * 10), 1, 0.1f);
+            }
+            else
+            {
+                blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressLeft) * 10), 1, 0.1f);
+            }
+
+            //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
+            float RProgressRight = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPos.x - p2CompA.initialPos.x)));
+            float RProgressLeft = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPosL.x - p2CompA.initialPos.x)));
+            if (RProgressRight > RProgressLeft)
+            {
+                redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressRight) * 10), 1, 0.1f);
+            }
+            else
+            {
+                redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressLeft) * 10), 1, 0.1f);
+            }
+
+
 
             //If one of the two team lists are empty, the opposing team wins
             if (redList.Count == 0)
@@ -125,23 +168,21 @@ public class Game : MonoBehaviour
 
                 //Display text for Red winning
                 announce(redWinStr, red);
-            }
-
-            
+            }           
 
             //Passes control to each player
             //When a player ends their turn, the status finished is set to true. Disable their script, enable the other.
-            if (playerOne.GetComponent<Action>().finished == true)
+            if (p1CompA.finished == true)
             { //If player 1 has finished their turn, disable them and enable player 2
 
                 
                 showMPText(false, red);
                 showAPText(false, red);
-
+         
                 Invoke("givePlrTwoTurn", 2);
 
             }
-            if (playerTwo.GetComponent<Action>().finished == true)
+            if (p2CompA.finished == true)
             { //If player 2 has finished their turn, disable them and enable player 1
 
                 showMPText(false, blue);
@@ -152,42 +193,30 @@ public class Game : MonoBehaviour
             }
 
             //When moveMode is on and the player's script is active, display the movement UI
-            if (playerOne.GetComponent<Action>().moveMode == true && playerOne.GetComponent<Action>().enabled == true)
+            if (p1CompA.moveMode == true && p1CompA.enabled == true)
             {
                 showMPText(true, blue);
                 showAPText(false, blue);
             }
-            else if (playerTwo.GetComponent<Action>().moveMode == true && playerTwo.GetComponent<Action>().enabled == true)
+            else if (p2CompA.moveMode == true && p2CompA.enabled == true)
             {
                 showMPText(true, red);
                 showAPText(false, red);
             }
             //When moveMode is off and the player's script is active, display the action UI
-            else if (playerOne.GetComponent<Action>().moveMode == false && playerOne.GetComponent<Action>().enabled == true)
+            else if (p1CompA.moveMode == false && p1CompA.enabled == true)
             {
                 showAPText(true, blue);
                 showMPText(false, blue);
             }
-            else if (playerTwo.GetComponent<Action>().moveMode == false && playerTwo.GetComponent<Action>().enabled == true)
+            else if (p2CompA.moveMode == false && p2CompA.enabled == true)
             {
                 showAPText(true, red);
                 showMPText(false, red);
             }
             
 
-            //Determine HP bar size based on each character's (CurrHP/MaxHP) * 10
-            blueHPBar.transform.localScale = new Vector3((playerOne.GetComponent<StickFigure>().CurrHP / playerOne.GetComponent<StickFigure>().MaxHP) * 10, 1, 0.1f);
-            redHPBar.transform.localScale = new Vector3((playerTwo.GetComponent<StickFigure>().CurrHP / playerTwo.GetComponent<StickFigure>().MaxHP) * 10, 1, 0.1f);
-
-            //Set the HP number above the health bars.
-            blueHPNum.text = (playerOne.GetComponent<StickFigure>().CurrHP +  "/" + playerOne.GetComponent<StickFigure>().MaxHP);
-            redHPNum.text = (playerTwo.GetComponent<StickFigure>().CurrHP + "/" + playerTwo.GetComponent<StickFigure>().MaxHP);
             
-            //Action p1comp = playerOne.GetComponent<Action>();
-            //p1comp.ini
-
-            blueMoveBar.transform.localScale = new Vector3(((playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) - playerTwo.transform.position.x) / (playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) * 10, 1, 0.1f);
-            redMoveBar.transform.localScale = new Vector3(((playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) - playerTwo.transform.position.x)/ (playerTwo.GetComponent<Action>().initialPos.x + playerTwo.GetComponent<Action>().moveRange) * 10, 1, 0.1f);
 
 
         }
@@ -241,7 +270,7 @@ public class Game : MonoBehaviour
     void givePlrOneTurn()
     {
 
-        playerTwo.GetComponent<Action>().enabled = false;
+        p2CompA.enabled = false;
         if (p2Active == true)
         {
             print("Player 1's Turn has begun");
@@ -265,7 +294,7 @@ public class Game : MonoBehaviour
     void givePlrTwoTurn()
     {
 
-        playerOne.GetComponent<Action>().enabled = false;
+        p1CompA.enabled = false;
         ////Turn on P2
         if (p1Active == true)
         {

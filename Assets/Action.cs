@@ -17,7 +17,8 @@ public class Action : MonoBehaviour
 
     Vector3 groundPos = new Vector3(0, 0, 0);
     public Vector3 initialPos = new Vector3(0, 0, 0);
-   
+    public Vector3 finalPos = new Vector3(0, 0, 0);
+    public Vector3 finalPosL;
 
     public bool facingRight;
 
@@ -86,7 +87,11 @@ public class Action : MonoBehaviour
         moveRange = 7;
         currSprite = transform.Find("Quad").GetComponent<MeshRenderer>();
         moveMode = true;
-        
+
+        initialPos = transform.position; //Get new position to base movement distance.
+        finalPos = initialPos + new Vector3(moveRange, 0, 0);
+        finalPosL = initialPos - new Vector3(moveRange, 0, 0);
+
         //Initializes all modes
         beginTurn(); 
         //Checks
@@ -188,7 +193,7 @@ public class Action : MonoBehaviour
             }
             //print(attackMode);
             //display some kind of UI?
-            if (Input.GetKeyDown(KeyCode.Alpha1) && attackMode == false) //Begin Gun targetting
+            if (Input.GetKeyDown(KeyCode.Alpha1) && attackMode == false && finished == false) //Begin Gun targetting
             {
                 attackMode = true;
                 gunMode = true;
@@ -197,7 +202,7 @@ public class Action : MonoBehaviour
                 soundPlayer.Play();
 
             }
-            if (Input.GetKeyDown(KeyCode.Alpha2) && attackMode == false) //Begin Grenade targetting
+            if (Input.GetKeyDown(KeyCode.Alpha2) && attackMode == false && finished == false) //Begin Grenade targetting
             {
                 attackMode = true;
                 grenadeMode = true;
@@ -206,7 +211,7 @@ public class Action : MonoBehaviour
                 soundPlayer.Play();
 
             }
-            if (Input.GetKeyDown(KeyCode.Alpha3) && attackMode == false) //Begin Boot targetting
+            if (Input.GetKeyDown(KeyCode.Alpha3) && attackMode == false && finished == false) //Begin Boot targetting
             {
                 attackMode = true;
                 bootMode = true;
@@ -360,7 +365,7 @@ public class Action : MonoBehaviour
     public void beginTurn()
     {
         //Initialize turn for player.
-        initialPos = transform.position; //Get new position to base movement distance.
+        
         finished = false; //Indicates finished action phase for this player.
         moveMode = true;
         attackMode = false;
@@ -374,9 +379,12 @@ public class Action : MonoBehaviour
         //End player's turn and resets modes except for movement.
         //Movemode will be activated in game manager
         //Cursor is also reset to default.
+        initialPos = transform.position; //Get new position to base movement distance.
+        finalPos = initialPos + new Vector3(moveRange, 0, 0);
+        finalPosL = initialPos - new Vector3(moveRange, 0, 0);
         Cursor.SetCursor(cursorArrow, Vector2.zero, CursorMode.ForceSoftware);
         moveMode = false;
-        attackMode = false;
+        attackMode = true;
         gunMode = false; //Indicates gun action
         grenadeMode = false; //Indicates grenade action
         bootMode = false; //Indicates boot action

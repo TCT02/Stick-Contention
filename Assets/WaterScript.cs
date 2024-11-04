@@ -24,11 +24,11 @@ public class WaterScript : MonoBehaviour
     {
         GameObject collidedWith = collision.gameObject;
 
-        if (collidedWith.CompareTag("Stick"))
-        {
-            soundPlayer.clip = splash;
-            soundPlayer.Play();
-        }
+       // if (collidedWith.CompareTag("Stick"))
+        //{
+        //    soundPlayer.clip = splash;
+          //  soundPlayer.Play();
+       // }
 
     }
 
