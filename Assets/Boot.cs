@@ -26,7 +26,7 @@ public class Boot : MonoBehaviour
         soundPlayer.clip = hit;
         //Weapon stats
         lifeTime = 3f; //fuse time before explosion
-        speed = 20;
+        speed = 15;
         power = 400;
 
         rb = GetComponent<Rigidbody>();
@@ -70,12 +70,14 @@ public class Boot : MonoBehaviour
             if (bootPosition.x > collidedWith.transform.position.x)
             {
                 print("Bonk");
-                collidedWith.GetComponent<Rigidbody>().AddForce(new Vector3(-power, 0, 0));
+                collidedWith.GetComponent<Rigidbody>().AddForce(new Vector3(-power, 100, 0));
+                Destroy(gameObject);
             }
             else //Otherwise displace right
             {
                 print("Bonk");
                 collidedWith.GetComponent<Rigidbody>().AddForce(new Vector3(power, 100, 0));
+                Destroy(gameObject);
             }
 
         }

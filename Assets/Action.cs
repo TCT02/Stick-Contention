@@ -92,12 +92,13 @@ public class Action : MonoBehaviour
         finalPos = initialPos + new Vector3(moveRange, 0, 0);
         finalPosL = initialPos - new Vector3(moveRange, 0, 0);
 
+        rb = GetComponent<Rigidbody>();
         //Initializes all modes
         beginTurn(); 
         //Checks
         onGround = true;
 
-        rb = GetComponent<Rigidbody>();
+        
     }
 
     // Update is called once per frame
@@ -111,6 +112,7 @@ public class Action : MonoBehaviour
 
         if (((transform.position.x <= initialPos.x + moveRange) && (transform.position.x >= initialPos.x - moveRange)) && moveMode == true)
         { //Movement Controls 
+
             if (Input.GetKey(KeyCode.D)) //Rightward movement
             {
 
@@ -359,13 +361,12 @@ public class Action : MonoBehaviour
    
     void walkCycle()
     {
-        transform.Find("Quad").GetComponent<MeshRenderer>().material = walk2;
+        //transform.Find("Quad").GetComponent<MeshRenderer>().material = walk2;
     }
 
     public void beginTurn()
     {
         //Initialize turn for player.
-        
         finished = false; //Indicates finished action phase for this player.
         moveMode = true;
         attackMode = false;

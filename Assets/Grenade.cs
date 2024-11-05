@@ -13,6 +13,7 @@ public class Grenade : MonoBehaviour
     float blastPower;
     Vector3 nadePosition;
     bool hasCollided = false;
+    Vector3 initialSize;
 
     private Rigidbody rb;
     private SphereCollider boomZone;
@@ -24,13 +25,15 @@ public class Grenade : MonoBehaviour
     void Start()
     {
         hasCollided = false;
+        initialSize = transform.localScale;
+
         soundPlayer = GetComponent<AudioSource>();
         soundPlayer.clip = explosion;
         //Weapon stats
         damage = 40;
         boomRadius = 7;
         lifeTime = 3f; //fuse time before explosion
-        speed = 10;
+        speed = 13;
         blastPower = 300;
 
         rb = gameObject.GetComponent<Rigidbody>();
@@ -76,14 +79,20 @@ public class Grenade : MonoBehaviour
         GameObject collidedWith = coll.gameObject;
         //Check for what the explosion hit and react accordingly
 
-        //If it hits a player (stick figure), deal damage and self destruct
-        if (collidedWith.CompareTag("Stick") && hasCollided == false)
+        //If it hits a player (stick figure) before exploding, do nothing
+        if (collidedWith.CompareTag("Stick") && hasCollided == false && initialSize.x == transform.localScale.x)
         {
+            //Do nothing
+
+        }
+        if (collidedWith.CompareTag("Stick") && hasCollided == false && transform.localScale.x > initialSize.x)
+        { // deal damage and self destruct if it has exploded
             hasCollided = true;
             soundPlayer.clip = explosion;
             soundPlayer.Play();
             //Inflict HP damage to target
             collidedWith.GetComponent<StickFigure>().CurrHP -= damage;
+                
 
             //rb.AddForce(new Vector3(-jumpPower, 1000, 0));
             //If the nade is right, displace left

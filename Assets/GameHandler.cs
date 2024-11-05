@@ -116,41 +116,64 @@ public class Game : MonoBehaviour
             Destroy(playerTwo);
             //print("Number of Red Players " + redList.Count);
         }
-        if (gameStarted) //Checks win conditions while the game is active
+        if (gameStarted) //Checks win conditions and other while the game is active
         {
-            //Determine HP bar size based on each character's (CurrHP/MaxHP) * 10
-            blueHPBar.transform.localScale = new Vector3((p1CompSF.CurrHP / p1CompSF.MaxHP) * 10, 1, 0.1f);
-            redHPBar.transform.localScale = new Vector3((p2CompSF.CurrHP / p2CompSF.MaxHP) * 10, 1, 0.1f);
-
-            //Set the HP number above the health bars.
-            blueHPNum.text = (p1CompSF.CurrHP + "/" + p1CompSF.MaxHP);
-            redHPNum.text = (p2CompSF.CurrHP + "/" + p2CompSF.MaxHP);
-
-            //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
-            float BProgressRight = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPos.x - p1CompA.initialPos.x)));
-            float BProgressLeft = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPosL.x - p1CompA.initialPos.x)));
-            if (BProgressRight > BProgressLeft)
-            {
-                blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressRight) * 10), 1, 0.1f);
-            }
-            else
-            {
-                blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressLeft) * 10), 1, 0.1f);
-            }
-
-            //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
-            float RProgressRight = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPos.x - p2CompA.initialPos.x)));
-            float RProgressLeft = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPosL.x - p2CompA.initialPos.x)));
-            if (RProgressRight > RProgressLeft)
-            {
-                redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressRight) * 10), 1, 0.1f);
-            }
-            else
-            {
-                redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressLeft) * 10), 1, 0.1f);
-            }
+ 
+                //Determine HP bar size based on each character's (CurrHP/MaxHP) * 10
+                //Updates Movement resource bar
+                if (p1CompSF.CurrHP >= 0 ) 
+                {
+                    blueHPBar.transform.localScale = new Vector3((p1CompSF.CurrHP / p1CompSF.MaxHP) * 10, 1, 0.1f);
+                    blueHPNum.text = (p1CompSF.CurrHP + "/" + p1CompSF.MaxHP);
+                }
+                else //Handle negative HP displays
+                {
+                    blueHPBar.transform.localScale = new Vector3((0 / p1CompSF.MaxHP) * 10, 1, 0.1f);
+                    blueHPNum.text = (0 + "/" + p1CompSF.MaxHP);
+                }
 
 
+                //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
+                float BProgressRight = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPos.x - p1CompA.initialPos.x)));
+                float BProgressLeft = (((playerOne.transform.position.x - p1CompA.initialPos.x) / (p1CompA.finalPosL.x - p1CompA.initialPos.x)));
+                if (BProgressRight > BProgressLeft)
+                {
+                    blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressRight) * 10), 1, 0.1f);
+                }
+                else
+                {
+                    blueMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - BProgressLeft) * 10), 1, 0.1f);
+                }
+
+
+                //Determine HP bar size based on each character's (CurrHP/MaxHP) * 10
+                //Updates Movement resource bar
+                if (p1CompSF.CurrHP >= 0)
+                {
+                    redHPBar.transform.localScale = new Vector3((p2CompSF.CurrHP / p2CompSF.MaxHP) * 10, 1, 0.1f);
+                    redHPNum.text = (p2CompSF.CurrHP + "/" + p2CompSF.MaxHP);
+                }
+                else //Handle negative HP displays
+                {
+                    redHPBar.transform.localScale = new Vector3((0 / p2CompSF.MaxHP) * 10, 1, 0.1f);
+                    redHPNum.text = (0 + "/" + p2CompSF.MaxHP);
+                }
+
+                
+
+                //Finds the percent progress of a player's movemeter and converts it into a bar visual. 
+                float RProgressRight = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPos.x - p2CompA.initialPos.x)));
+                float RProgressLeft = (((playerTwo.transform.position.x - p2CompA.initialPos.x) / (p2CompA.finalPosL.x - p2CompA.initialPos.x)));
+                if (RProgressRight > RProgressLeft)
+                {
+                    redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressRight) * 10), 1, 0.1f);
+                }
+                else
+                {
+                    redMoveBar.transform.localScale = new Vector3(Mathf.Abs((1 - RProgressLeft) * 10), 1, 0.1f);
+                }
+
+            
 
             //If one of the two team lists are empty, the opposing team wins
             if (redList.Count == 0)
@@ -159,7 +182,7 @@ public class Game : MonoBehaviour
                 gameStarted = false;
 
                 //Display text for Blue  winning
-                announce(blueWinStr, blue);
+                announceBig(blueWinStr, blue);
             }
             else if (blueList.Count == 0)
             {
@@ -167,7 +190,7 @@ public class Game : MonoBehaviour
                 gameStarted = false;
 
                 //Display text for Red winning
-                announce(redWinStr, red);
+                announceBig(redWinStr, red);
             }           
 
             //Passes control to each player
@@ -320,7 +343,7 @@ public class Game : MonoBehaviour
     void startingText()
     {
         textBoard.text = matchStartStr;
-        Invoke("clearText", 3); //Clears text in 3 seconds
+        Invoke("clearTextBoard", 3); //Clears text in 3 seconds
        
         announce(blueTurnStr, blue);
 
@@ -333,11 +356,24 @@ public class Game : MonoBehaviour
         Invoke("clearText", 2);
 
     }
+    void announceBig(string message, Color color)
+    {
+        textBoard.color = color;
+        textBoard.text = message;
+        Invoke("clearText", 2);
+
+    }
     //Clear any messages
     void clearText()
     {
         textBoard.text = "";
         winText.text = "";
+
+    }
+
+    void clearTextBoard()
+    {
+        textBoard.text = "";
 
     }
 
